@@ -71,9 +71,6 @@ tee /etc/resolv.conf > /dev/null <<EOL
 nameserver 127.0.0.1
 EOL
 
-echo "=== Установка Marzban node ==="
-sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/marzban-node.sh)" @ install
-
 echo "=== Проверка статуса сервисов ==="
 # проверка dnsproxy на 53 порту
 if netstat -tuln | grep -q ":53 "; then
@@ -176,3 +173,6 @@ systemctl restart caddy
 
 echo "=== Статус Caddy ==="
 systemctl status caddy --no-pager
+
+echo "=== Установка Marzban node ==="
+sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/marzban-node.sh)" @ install
