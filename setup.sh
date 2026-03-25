@@ -40,6 +40,52 @@ EOL
 
 sysctl -p
 
+echo "=== Загрузка и установка dnsproxy ==="
+VERSION=$(curl -s https://api.github.com/repos/AdguardTeam/dnsproxy/releases/latest | grep tag_name | cut -d '"' -f 4) && echo "Latest AdguardTeam dnsproxy version is $VERSION"
+wget -O dnsproxy.tar.gz "https://github.com/AdguardTeam/dnsproxy/releases/download/${VERSION}/dnsproxy-linux-amd64-${VERSION}.tar.gz"
+tar -xzvf dnsproxy.tar.gz
+cd linux-amd64
+sudo mv dnsproxy /usr/bin/dnsproxy
+cd ..
+rm -rf linux-amd64 dnsproxy.tar.gz
+
+echo "=== Настройка supervisor для dnsproxy ==="
+tee /etc/supervisor/conf.d/dnsproxy.conf > /dev/null <<EOL
+[program:dnsproxy]
+command = /usr/bin/dnsproxy -l 127.0.0.1 -p 53 -u https://doht.marss.vip/dns-query -b 212.34.139.145:53
+user = root
+autostart = true
+autorestart = true
+stdout_logfile = /var/log/supervisor/dnsproxy.log
+stderr_logfile = /var/log/supervisor/dnsproxy.error.log
+environment = LANG="en_US.UTF-8"
+EOL
+
+systemctl restart supervisor
+
+echo "=== Тестовый запуск dnsproxy (в фоне) ==="
+dnsproxy -l 127.0.0.1 -p 53 -u https://doht.marss.vip/dns-query -b 212.34.139.145:53 &
+
+echo "=== Настройка /etc/resolv.conf ==="
+tee /etc/resolv.conf > /dev/null <<EOL
+nameserver 127.0.0.1
+EOL
+
+echo "=== Проверка статуса сервисов ==="
+# проверка dnsproxy на 53 порту
+if netstat -tuln | grep -q ":53 "; then
+  echo "✅ dnsproxy слушает порт 53"
+else
+  echo "❌ dnsproxy НЕ слушает порт 53"
+fi
+
+# проверка supervisor
+if systemctl is-active --quiet supervisor; then
+  echo "✅ supervisor активен"
+else
+  echo "❌ supervisor не запущен"
+fi
+
 echo "=== Сборка Caddy с layer4 (xcaddy) и установка ==="
 apt update -y
 apt install -y curl git ca-certificates libcap2-bin
