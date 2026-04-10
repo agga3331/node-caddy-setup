@@ -3,12 +3,6 @@ set -euo pipefail
 
 echo "=== $(date) Начало установки ==="
 
-# проверка root
-if [ "$(id -u)" -ne 0 ]; then
-  echo "❌ Запустите скрипт от root (su -) или через sudo"
-  exit 1
-fi
-
 echo "=== Обновление системы ==="
 apt update -y
 apt upgrade -y
