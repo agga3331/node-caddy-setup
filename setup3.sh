@@ -3,6 +3,7 @@ set -euo pipefail
 
 echo "=== $(date) Начало установки ==="
 
+
 echo "=== Обновление системы ==="
 apt update -y
 apt upgrade -y
