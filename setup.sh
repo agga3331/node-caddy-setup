@@ -52,7 +52,7 @@ rm -rf linux-amd64 dnsproxy.tar.gz
 echo "=== Настройка supervisor для dnsproxy ==="
 tee /etc/supervisor/conf.d/dnsproxy.conf > /dev/null <<EOL
 [program:dnsproxy]
-command = /usr/bin/dnsproxy -l 127.0.0.1 -p 53 -u https://doht.marss.vip/dns-query -b 91.84.123.216:53
+command = /usr/bin/dnsproxy -l 127.0.0.1 -p 53 -u https://dns.marss.vip/dns-query -b 195.63.166.174:53
 user = root
 autostart = true
 autorestart = true
@@ -64,7 +64,7 @@ EOL
 systemctl restart supervisor
 
 echo "=== Тестовый запуск dnsproxy (в фоне) ==="
-dnsproxy -l 127.0.0.1 -p 53 -u https://doht.marss.vip/dns-query -b 91.84.123.216:53 &
+dnsproxy -l 127.0.0.1 -p 53 -u https://dns.marss.vip/dns-query -b 195.63.166.174:53 &
 
 echo "=== Настройка /etc/resolv.conf ==="
 tee /etc/resolv.conf > /dev/null <<EOL
