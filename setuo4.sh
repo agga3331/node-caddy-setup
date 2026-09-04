@@ -174,5 +174,4 @@ systemctl restart caddy
 echo "=== Статус Caddy ==="
 systemctl status caddy --no-pager
 
-echo "=== Установка Marzban node ==="
-sudo bash -c "$(curl -sL https://github.com/Gozargah/Marzban-scripts/raw/master/marzban-node.sh)" @ install
+
